@@ -212,7 +212,9 @@ class Pay_Controller_Payment extends Controller {
         $modelName = 'model_payment_' . $this->_paymentMethodName;
         if($_GET['action'] == 'pending'){
             $message = 'ignoring PENDING';
-        } else{
+        } elseif(substr($_GET['action'],0,6) == 'refund'){
+            $message = 'ignoring REFUND';
+        }else{
             try {
                 $status = $this->$modelName->processTransaction($transactionId);
                 $message = "Status updated to $status";

@@ -121,40 +121,48 @@ class Pay_Controller_Payment extends Controller {
             //Producten toevoegen
             foreach ($this->cart->getProducts() as $product) {
                 $priceWithTax = $this->tax->calculate($product['price'], $product['tax_class_id'], true);
+                $tax = $priceWithTax - $product['price'];
                 $price = round($priceWithTax * 100);
                 $totalAmount += $price * $product['quantity'];
-                $apiStart->addProduct($product['product_id'], $product['name'], $price, $product['quantity'], 'H');
+                
+                $apiStart->addProduct($product['product_id'], $product['name'], $price, $product['quantity'], Pay_Helper::calculateTaxClass($priceWithTax, $tax));
             }
 
-            // Shipping costs?
-            if (isset($this->session->data['shipping_method']['cost']) && $this->session->data['shipping_method']['cost'] != 0) {             
-                $arrShipping = $this->session->data['shipping_method'];
-                $shippingCost = $this->tax->calculate($arrShipping['cost'], $arrShipping['tax_class_id'], true);
-                $shippingCost = round($shippingCost*100);
-                $apiStart->addProduct('0', 'Verzendkosten', $shippingCost, 1, 'H');
-                $totalAmount += $shippingCost;
-            }
-            
-            //kortingen toevoegen
-            $this->load->model('checkout/voucher');
-			if(isset($this->session->data['voucher'])){
-				$voucherCode = $this->session->data['voucher'];
-				$voucher_info = $this->model_checkout_voucher->getVoucher($voucherCode);
-				
-				if(!empty($voucher_info)){
-					$voucher_value = $voucher_info['amount']*-100;                
-					$apiStart->addProduct('0', 'Voucher', $voucher_value, 1, 'N');
-					
-					$totalAmount += $voucher_value;                
-				}            
-			}
+//            // Shipping costs?
+//            if (isset($this->session->data['shipping_method']['cost']) && $this->session->data['shipping_method']['cost'] != 0) {
+//                $arrShipping = $this->session->data['shipping_method'];
+//                $shippingCost = $this->tax->calculate($arrShipping['cost'], $arrShipping['tax_class_id'], true);
+//                $shippingCost = round($shippingCost*100);
+//                $apiStart->addProduct('0', 'Verzendkosten', $shippingCost, 1, 'H');
+//                $totalAmount += $shippingCost;
+//            }
           
-            //correctieregel maken, zodat het totaal altijd klopt
-            $amount = round($order_info['total'] * 100);
-            
-            $verschil = $amount - $totalAmount;
-            if($verschil<0){
-                $apiStart->addProduct('0', 'Korting', $verschil, 1, 'N');
+            //Extra totals rijen
+            $total_data = array();
+            $total = 0;
+            $taxes = $this->cart->getTaxes();
+            $this->load->model('setting/extension');
+            $results = $this->model_setting_extension->getExtensions('total');
+            $taxesForTotals = array();
+
+            foreach ($results as $result) {
+                $taxesBefore = array_sum($taxes);
+                if ($this->config->get($result['code'] . '_status')) {
+                    $this->load->model('total/' . $result['code']);
+
+                    $this->{'model_total_' . $result['code']}->getTotal($total_data, $total, $taxes);
+                    $taxAfter = array_sum($taxes);
+                    $taxesForTotals[$result['code']] = $taxAfter-$taxesBefore;
+                }
+            }
+
+            foreach($total_data as $total_row){
+                if(!in_array($total_row['code'], array('sub_total', 'tax', 'total'))){
+                    $totalIncl = $total_row['value']+$taxesForTotals[$total_row['code']];
+
+                    $apiStart->addProduct($total_row['code'],$total_row['title'], round($totalIncl*100), 1, Pay_Helper::calculateTaxClass($totalIncl, $taxesForTotals[$total_row['code']]));
+                }
+                    
             }
 
             $postData = $apiStart->getPostData();

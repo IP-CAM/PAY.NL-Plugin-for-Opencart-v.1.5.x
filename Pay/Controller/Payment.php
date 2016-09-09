@@ -6,7 +6,8 @@ class Pay_Controller_Payment extends Controller {
     protected $_paymentMethodName;
 
     public function index() {
-        $this->data['button_confirm'] = 'Betalen';
+        $this->language->load('payment/paynl');
+        $this->data['button_confirm'] = $this->language->get('text_pay');
         $this->data['paymentMethodName'] = $this->_paymentMethodName;
 
         $this->load->model('setting/setting');
@@ -201,6 +202,7 @@ class Pay_Controller_Payment extends Controller {
             $status = $this->$modelName->processTransaction($transactionId);
         } catch(Exception $e){
             // we doen er niks mee, want redirecten moeten we sowieso.
+            $status = "";
         }
 
         if ($status == Pay_Model::STATUS_COMPLETE || $status == Pay_Model::STATUS_PENDING) {

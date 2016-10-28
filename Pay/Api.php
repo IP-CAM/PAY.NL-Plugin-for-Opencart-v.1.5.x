@@ -86,8 +86,10 @@ class Pay_Api {
             $result = curl_exec($ch);
 
 
-            if ($result == false) {
+            if ($result == false) {		
                 $error = curl_error($ch);
+                curl_close($ch);
+    	    	throw new Exception($error);
             }
             curl_close($ch);
 

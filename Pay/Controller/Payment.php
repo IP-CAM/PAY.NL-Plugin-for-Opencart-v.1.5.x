@@ -228,15 +228,24 @@ class Pay_Controller_Payment extends Controller {
             try {
                 $status = $this->$modelName->processTransaction($transactionId);
                 $message = "Status updated to $status";
+		        $result = true;
             } catch (Pay_Api_Exception $e) {
                 $message = "Api Error: " . $e->getMessage();
+                if($e->getCode() == 1000) $result = true;
+                else $result = false;
             } catch (Pay_Exception $e) {
                 $message = "Plugin error: " . $e->getMessage();
+                if($e->getCode() == 1000) $result = true;
+                else $result = false;
             } catch (Exception $e) {
                 $message = "Unknown error: " . $e->getMessage();
+                if($e->getCode() == 1000) $result = true;
+                else $result = false;
             }
         }
-        echo "TRUE|" . $message;
+        if($result == true) echo "TRUE";
+        else echo "FALSE";
+        echo "|" . $message;
         die();
     }
 

@@ -1,12 +1,14 @@
 <?php
 
-class Pay_Model extends Model {
+class Pay_Model extends Model
+{
 
     const STATUS_PENDING = 'PENDING';
     const STATUS_CANCELED = 'CANCELED';
     const STATUS_COMPLETE = 'COMPLETE';
 
-    public function createTables() {
+    public function createTables()
+    {
         $this->db->query("
                 
 			CREATE TABLE IF NOT EXISTS `" . DB_PREFIX . "paynl_transactions` (
@@ -46,26 +48,28 @@ class Pay_Model extends Model {
 		");
     }
 
-    public function addTransaction($transactionId, $orderId, $optionId, $amount, $startData, $optionSubId = null) {
+    public function addTransaction($transactionId, $orderId, $optionId, $amount, $startData, $optionSubId = null)
+    {
         $sql = "INSERT INTO `" . DB_PREFIX . "paynl_transactions` (id, orderId, optionId, optionSubId, amount, status, created, start_data) VALUES ("
-                . "'" . $this->db->escape($transactionId) . "'"
-                . ",'" . $this->db->escape($orderId) . "'"
-                . ",'" . $this->db->escape($optionId) . "'"
-                . "," . (is_null($optionSubId) ? 'NULL' : "'" . $this->db->escape($optionSubId) . "'")
-                . ",'" . $this->db->escape($amount) . "'"
-                . ", '" . self::STATUS_PENDING . "'"
-                . ", UNIX_TIMESTAMP() "
-                . ",'" . $this->db->escape(json_encode($startData)) . "'"
-                . ")";
+            . "'" . $this->db->escape($transactionId) . "'"
+            . ",'" . $this->db->escape($orderId) . "'"
+            . ",'" . $this->db->escape($optionId) . "'"
+            . "," . (is_null($optionSubId) ? 'NULL' : "'" . $this->db->escape($optionSubId) . "'")
+            . ",'" . $this->db->escape($amount) . "'"
+            . ", '" . self::STATUS_PENDING . "'"
+            . ", UNIX_TIMESTAMP() "
+            . ",'" . $this->db->escape(json_encode($startData)) . "'"
+            . ")";
         return $this->db->query($sql);
     }
 
-    public function refreshPaymentOptions($serviceId, $apiToken) {
+    public function refreshPaymentOptions($serviceId, $apiToken)
+    {
         $serviceId = $this->db->escape($serviceId);
         //eerst de oude verwijderen
         $sql = "DELETE options,optionsubs  FROM `" . DB_PREFIX . "paynl_paymentoptions` as options "
-                . "LEFT JOIN `" . DB_PREFIX . "paynl_paymentoption_subs` as optionsubs ON optionsubs.paymentOptionId = options.id "
-                . "WHERE options.serviceId = '$serviceId'";
+            . "LEFT JOIN `" . DB_PREFIX . "paynl_paymentoption_subs` as optionsubs ON optionsubs.paymentOptionId = options.id "
+            . "WHERE options.serviceId = '$serviceId'";
         $this->db->query($sql);
 
         //nieuwe ophalen
@@ -84,8 +88,8 @@ class Pay_Model extends Model {
             $img = $this->db->escape($img);
 
             $sql = "INSERT INTO `" . DB_PREFIX . "paynl_paymentoptions` "
-                    . "(optionId, serviceId, name, img, update_date) VALUES "
-                    . "('$optionId', '$serviceId', '$name', '$img', NOW())";
+                . "(optionId, serviceId, name, img, update_date) VALUES "
+                . "('$optionId', '$serviceId', '$name', '$img', NOW())";
             $this->db->query($sql);
 
             $internalOptionId = $this->db->getLastId();
@@ -101,14 +105,15 @@ class Pay_Model extends Model {
                 $img = $this->db->escape($img);
 
                 $sql = "INSERT INTO `" . DB_PREFIX . "paynl_paymentoption_subs` "
-                        . "(optionSubId, paymentOptionId, name, img, update_date) VALUES "
-                        . "('$optionSubId', $internalOptionId, '$name', '$img', NOW() )";
+                    . "(optionSubId, paymentOptionId, name, img, update_date) VALUES "
+                    . "('$optionSubId', $internalOptionId, '$name', '$img', NOW() )";
                 $this->db->query($sql);
             }
         }
     }
 
-    public function getPaymentOption($serviceId, $paymentOptionId) {
+    public function getPaymentOption($serviceId, $paymentOptionId)
+    {
         $serviceId = $this->db->escape($serviceId);
         $paymentOptionId = $this->db->escape($paymentOptionId);
 
@@ -146,60 +151,8 @@ class Pay_Model extends Model {
         return $arrPaymentOption;
     }
 
-    public function getTransaction($transactionId) {
-        $sql = "SELECT * FROM `" . DB_PREFIX . "paynl_transactions` WHERE id = '" . $this->db->escape($transactionId) . "' LIMIT 1;";
-        $result = $this->db->query($sql);
-
-        return $result->row;
-    }
-
-    /**
-     * Get The statusses of the order.
-     * Because the order can have multiple transactions, 
-     * We have to check here if the order hasn't already been completed
-     */
-    public function getStatussesOfOrder($orderId) {
-        $sql = "SELECT `status` FROM `" . DB_PREFIX . "paynl_transactions` WHERE orderId = '" . $this->db->escape($orderId) . "';";
-        $result = $this->db->query($sql);
-
-        $rows = $result->rows;
-        $result = array();
-        foreach ($rows as $row) {
-            $result[] = $row['status'];
-        }
-        return $result;
-    }
-
-    public function updateTransactionStatus($transactionId, $status) {
-        if (!in_array($status, array(self::STATUS_CANCELED, self::STATUS_COMPLETE, self::STATUS_PENDING))) {
-            throw new Pay_Exception('Invalid transaction status');
-        }
-        //safety so processed orders cannot go to canceled
-        $transaction = $this->getTransaction($transactionId);
-
-        if (empty($transaction)) {
-            throw new Pay_Exception('Transaction not found');
-        }
-
-        //Because an order can have multiple transactions, we have to look for the status complete in all transactions for this order.
-        $orderStatusses = self::getStatussesOfOrder($transaction['orderId']);
-
-        if (in_array(self::STATUS_COMPLETE, $orderStatusses) && $status != self::STATUS_COMPLETE) {
-            throw new Pay_Exception('Order already complete');
-        }
-
-
-        if ($transaction['status'] == $status) {
-            //status is not changed
-            return true;
-        }
-
-        $sql = "UPDATE `" . DB_PREFIX . "paynl_transactions` SET status = '$status' , last_update = UNIX_TIMESTAMP() WHERE id = '" . $this->db->escape($transactionId) . "'";
-
-        return $this->db->query($sql);
-    }
-
-    public function getMethod($address = false, $total = false) {
+    public function getMethod($address = false, $total = false)
+    {
         if (!$this->config->get($this->_paymentMethodName . '_status')) {
             return false;
         }
@@ -214,7 +167,7 @@ class Pay_Model extends Model {
         }
         $geo_zone_id = $this->config->get($this->_paymentMethodName . '_geo_zone_id');
 
-        $query = $this->db->query("SELECT * FROM " . DB_PREFIX . "zone_to_geo_zone WHERE geo_zone_id = '" . (int) $geo_zone_id . "' AND country_id = '" . (int) $address['country_id'] . "' AND (zone_id = '" . (int) $address['zone_id'] . "' OR zone_id = '0')");
+        $query = $this->db->query("SELECT * FROM " . DB_PREFIX . "zone_to_geo_zone WHERE geo_zone_id = '" . (int)$geo_zone_id . "' AND country_id = '" . (int)$address['country_id'] . "' AND (zone_id = '" . (int)$address['zone_id'] . "' OR zone_id = '0')");
 
         if (!$geo_zone_id) {
             $status = true;
@@ -233,11 +186,13 @@ class Pay_Model extends Model {
         return $data;
     }
 
-    public function getLabel() {
+    public function getLabel()
+    {
         return $this->config->get($this->_paymentMethodName . '_label');
     }
 
-    public function processTransaction($transactionId) {
+    public function processTransaction($transactionId)
+    {
         $this->load->model('setting/setting');
         $this->load->model('checkout/order');
 
@@ -303,15 +258,72 @@ class Pay_Model extends Model {
         return $status;
     }
 
-    protected function putBackProducts($order_id) {
-        $order_product_query = $this->db->query("SELECT * FROM " . DB_PREFIX . "order_product WHERE order_id = '" . (int) $order_id . "'");
-        foreach ($order_product_query->rows as $order_product) {
-            $this->db->query("UPDATE " . DB_PREFIX . "product SET quantity = (quantity + " . (int) $order_product['quantity'] . ") WHERE product_id = '" . (int) $order_product['product_id'] . "' AND subtract = '1'");
+    public function getTransaction($transactionId)
+    {
+        $sql = "SELECT * FROM `" . DB_PREFIX . "paynl_transactions` WHERE id = '" . $this->db->escape($transactionId) . "' LIMIT 1;";
+        $result = $this->db->query($sql);
 
-            $order_option_query = $this->db->query("SELECT * FROM " . DB_PREFIX . "order_option WHERE order_id = '" . (int) $order_id . "' AND order_product_id = '" . (int) $order_product['order_product_id'] . "'");
+        return $result->row;
+    }
+
+    public function updateTransactionStatus($transactionId, $status)
+    {
+        if (!in_array($status, array(self::STATUS_CANCELED, self::STATUS_COMPLETE, self::STATUS_PENDING))) {
+            throw new Pay_Exception('Invalid transaction status');
+        }
+        //safety so processed orders cannot go to canceled
+        $transaction = $this->getTransaction($transactionId);
+
+        if (empty($transaction)) {
+            throw new Pay_Exception('Transaction not found');
+        }
+
+        //Because an order can have multiple transactions, we have to look for the status complete in all transactions for this order.
+        $orderStatusses = self::getStatussesOfOrder($transaction['orderId']);
+
+        if (in_array(self::STATUS_COMPLETE, $orderStatusses) && $status != self::STATUS_COMPLETE) {
+            throw new Pay_Exception('Order already complete', 1000);
+        }
+
+
+        if ($transaction['status'] == $status) {
+            //status is not changed
+            return true;
+        }
+
+        $sql = "UPDATE `" . DB_PREFIX . "paynl_transactions` SET status = '$status' , last_update = UNIX_TIMESTAMP() WHERE id = '" . $this->db->escape($transactionId) . "'";
+
+        return $this->db->query($sql);
+    }
+
+    /**
+     * Get The statusses of the order.
+     * Because the order can have multiple transactions,
+     * We have to check here if the order hasn't already been completed
+     */
+    public function getStatussesOfOrder($orderId)
+    {
+        $sql = "SELECT `status` FROM `" . DB_PREFIX . "paynl_transactions` WHERE orderId = '" . $this->db->escape($orderId) . "';";
+        $result = $this->db->query($sql);
+
+        $rows = $result->rows;
+        $result = array();
+        foreach ($rows as $row) {
+            $result[] = $row['status'];
+        }
+        return $result;
+    }
+
+    protected function putBackProducts($order_id)
+    {
+        $order_product_query = $this->db->query("SELECT * FROM " . DB_PREFIX . "order_product WHERE order_id = '" . (int)$order_id . "'");
+        foreach ($order_product_query->rows as $order_product) {
+            $this->db->query("UPDATE " . DB_PREFIX . "product SET quantity = (quantity + " . (int)$order_product['quantity'] . ") WHERE product_id = '" . (int)$order_product['product_id'] . "' AND subtract = '1'");
+
+            $order_option_query = $this->db->query("SELECT * FROM " . DB_PREFIX . "order_option WHERE order_id = '" . (int)$order_id . "' AND order_product_id = '" . (int)$order_product['order_product_id'] . "'");
 
             foreach ($order_option_query->rows as $option) {
-                $this->db->query("UPDATE " . DB_PREFIX . "product_option_value SET quantity = (quantity + " . (int) $order_product['quantity'] . ") WHERE product_option_value_id = '" . (int) $option['product_option_value_id'] . "' AND subtract = '1'");
+                $this->db->query("UPDATE " . DB_PREFIX . "product_option_value SET quantity = (quantity + " . (int)$order_product['quantity'] . ") WHERE product_option_value_id = '" . (int)$option['product_option_value_id'] . "' AND subtract = '1'");
             }
         }
     }

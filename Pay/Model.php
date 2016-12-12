@@ -2,6 +2,7 @@
 
 class Pay_Model extends Model
 {
+    protected $_paymentMethodName = 'paynl_';
 
     const STATUS_PENDING = 'PENDING';
     const STATUS_CANCELED = 'CANCELED';
@@ -193,6 +194,7 @@ class Pay_Model extends Model
 
     public function processTransaction($transactionId)
     {
+
         $this->load->model('setting/setting');
         $this->load->model('checkout/order');
 
@@ -229,6 +231,11 @@ class Pay_Model extends Model
         $message = "Pay.nl Updated order to $status.";
         //order updaten
         $order_info = $this->model_checkout_order->getOrder($transaction['orderId']);
+
+        if($this->_paymentMethodName != $order_info['payment_code']){
+            throw new Pay_Exception('Payment not made with this payment method', 1000);
+        }
+
         if ($order_info['order_status_id'] != $orderStatusId) {
             //alleen updaten als de status daadwerkelijk veranderd, ivm exchange, de order wordt 2 keer aangepast
             if ($settings[$this->_paymentMethodName . '_send_confirm_email'] == 'start') {

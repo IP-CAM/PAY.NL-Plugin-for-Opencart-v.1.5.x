@@ -192,7 +192,7 @@ class Pay_Model extends Model
         return $this->config->get($this->_paymentMethodName . '_label');
     }
 
-    public function processTransaction($transactionId)
+    public function processTransaction($transactionId, $dry_run = false)
     {
 
         $this->load->model('setting/setting');
@@ -223,6 +223,10 @@ class Pay_Model extends Model
         } else if ($state < 0) {
             $status = self::STATUS_CANCELED;
             $orderStatusId = $statusCanceled;
+        }
+
+        if($dry_run){
+            return $status;
         }
 
         //status updaten

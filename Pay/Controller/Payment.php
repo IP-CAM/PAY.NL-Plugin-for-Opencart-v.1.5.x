@@ -199,7 +199,7 @@ class Pay_Controller_Payment extends Controller {
 
         $modelName = 'model_payment_' . $this->_paymentMethodName;
         try{
-            $status = $this->$modelName->processTransaction($transactionId);
+            $status = $this->$modelName->processTransaction($transactionId, true);
         } catch(Exception $e){
             // we doen er niks mee, want redirecten moeten we sowieso.
             $status = "";

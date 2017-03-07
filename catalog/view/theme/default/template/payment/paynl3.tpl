@@ -29,22 +29,21 @@
                 data: data,
                 type: 'POST',
                 beforeSend: function() {
-                    $('#button-confirm').attr('disabled', true);
-                            <?php if (substr(VERSION, 0, 3) == '1.4') { ?>
-                            $('#paynl_payment').before('<div class="wait"><img src="catalog/view/theme/default/image/loading_1.gif" alt="" />Betaling wordt gestart</div>');
-                            <?php } else { ?>
-                            $('#paynl_payment').before('<div class="attention"><img src="catalog/view/theme/default/image/loading.gif" alt="" />Betaling wordt gestart</div>');
-                            <?php } ?>
+                    $('#button-confirm').remove();
+                    <?php if (substr(VERSION, 0, 3) == '1.4') { ?>
+                        $('#paynl_payment').before('<div class="wait"><img src="catalog/view/theme/default/image/loading_1.gif" alt="" />Betaling wordt gestart</div>');
+                    <?php } else { ?>
+                        $('#paynl_payment').before('<div class="attention"><img src="catalog/view/theme/default/image/loading.gif" alt="" />Betaling wordt gestart</div>');
+                    <?php } ?>
                 },
                 success: function(json) {
                     if (json['error']) {
-                    <?php if (substr(VERSION, 0, 3) == '1.4') { ?>
+                        <?php if (substr(VERSION, 0, 3) == '1.4') { ?>
                             $('.wait').remove();
-                            <?php } else { ?>
+                        <?php } else { ?>
                             $('.attention').remove();
-                            <?php } ?>
-                            alert(json['error']);
-                    $('#button-confirm').attr('disabled', false);
+                        <?php } ?>
+                        alert(json['error']);
                     }
                     if (json['success']) {
                         location = json['success'];

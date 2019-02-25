@@ -105,14 +105,17 @@ class Pay_Controller_Payment extends Controller {
                 'countryCode' => $order_info['payment_iso_code_2'],
             );
 
+            $enduserInitials = !empty($initialsShipping)?$initialsShipping:$initialsPayment;
+            $enduserLastname = !empty($order_info['shipping_lastname'])?$order_info['shipping_lastname']:$order_info['payment_lastname'];
 
             $arrEnduser = array(
-                'initials' => substr($initialsShipping,0,1),
-                'lastName' => $order_info['shipping_lastname'],
+                'initials' => substr($enduserInitials,0,1),
+                'lastName' => $enduserLastname,
                 'language' => substr($order_info['language_code'],0,2),
                 'emailAddress' => $order_info['email'],
                 'address' => $arrShippingAddress,
                 'invoiceAddress' => $arrPaymentAddress,
+                'phoneNumber' => $order_info['telephone']
             );
 
             $apiStart->setEnduser($arrEnduser);
@@ -129,15 +132,6 @@ class Pay_Controller_Payment extends Controller {
                 $apiStart->addProduct($product['product_id'], $product['name'], $price, $product['quantity'], Pay_Helper::calculateTaxClass($priceWithTax, $tax));
             }
 
-//            // Shipping costs?
-//            if (isset($this->session->data['shipping_method']['cost']) && $this->session->data['shipping_method']['cost'] != 0) {
-//                $arrShipping = $this->session->data['shipping_method'];
-//                $shippingCost = $this->tax->calculate($arrShipping['cost'], $arrShipping['tax_class_id'], true);
-//                $shippingCost = round($shippingCost*100);
-//                $apiStart->addProduct('0', 'Verzendkosten', $shippingCost, 1, 'H');
-//                $totalAmount += $shippingCost;
-//            }
-          
             //Extra totals rijen
             $total_data = array();
             $total = 0;

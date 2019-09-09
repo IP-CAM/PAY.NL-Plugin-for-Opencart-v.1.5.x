@@ -1,10 +1,43 @@
-# Opencart plugin
-Pay.nl Opencart 1.5 plugin
+# Pay.nl OpenCart plugin
 
-## 1. Installation
-1. Upload the folders admin, catalog and Pay to the webroot of your opencart webshop. The admin and catalog folders should already be there.
-2. Log in to your opencart admin
-3. Go to: Extensions -> Payments
-4. Install the desired payment methods, and edit the settings
-5. Fill in your API token and ServiceId, and enable the payment method
-6. The payment method should now be visible in your checkout
+---
+- [Summary](#summary)
+- [Quickstart](#quickstart)
+- [Setup](#setup)
+
+---
+### Summary
+
+With this plug-in by Pay.nl you can easily add all desired payment methods to your OpenCart webshop. Please refer to https://www.pay.nl (Dutch) for an overview of all features and services. 
+
+##### Available payment methods:
+
+Bank Payments  | Creditcards | Gift cards & Vouchers | Pay by invoice | Others | 
+:-----------: | :-----------: | :-----------: | :-----------: | :-----------: |
+iDEAL + QR |Visa | VVV Cadeaukaart | AfterPay | PayPal |
+Bancontact + QR |  Mastercard | Webshop Giftcard | Billink | WeChatPay | 
+Giropay |American Express | FashionCheque |Focum AchterafBetalen.nl | AmazonPay |
+MyBank | Carte Bancaire | Podium Cadeaukaart | Capayable Achteraf Betalen | Cashly | 
+SOFORT | PostePay | Gezondheidsbon | Capayable Gespreid betalen | Pay Fixed Price (phone) |
+Maestro | Dankort | Fashion Giftcard | Klarna | Instore Payments (POS) |
+Bank Transfer | Cartasi | GivaCard | SprayPay | Przelewy24 | 
+| Tikkie | | YourGift | Creditclick | | 
+| | | Paysafecard |
+
+
+### Quickstart
+
+##### Installing
+
+Download the latest .zip release and unzip it to your webroot
+
+##### Setup
+
+1. Log into the OpenCart admin
+2. Go to *Extensions* > *Payments*
+3. Scroll down to one of the Pay.nl payment methods and click on the install button
+4. Click on the edit button on the previously installed payment method
+5. Enter the API token and serviceID (these can be found in the Pay.nl Admin Panel --> https://admin.pay.nl/programs/programs
+6. Save the settings
+
+Go to the *Manage* > *Services* tab in the Pay.nl Admin Panel to enable extra payment methods

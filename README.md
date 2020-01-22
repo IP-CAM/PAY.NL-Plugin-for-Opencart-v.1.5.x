@@ -33,9 +33,9 @@ Download the latest .zip release and unzip it to your webroot
 
 ##### Setup
 
-1. Log into the OpenCart admin
-2. Go to *Extensions* > *Payments*
-3. Scroll down to one of the Pay.nl payment methods and click on the install button
+1. Upload everything from the paynl plugin to the webroot of your server
+2. Go to your admin dashboard and navigate to "extensions" => "payments" (left menu)
+3. Install a payment method and fill out any required information
 4. Click on the edit button on the previously installed payment method
 5. Enter the API token and serviceID (these can be found in the Pay.nl Admin Panel --> https://admin.pay.nl/programs/programs
 6. Save the settings

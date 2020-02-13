@@ -1,8 +1,6 @@
 <?php
 // Text
 $_['text_payment'] = 'Payment';
-
-
 $_['button_save'] = 'Save';
 $_['button_cancel'] = 'Cancel';
 

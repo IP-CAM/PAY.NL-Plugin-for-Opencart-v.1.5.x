@@ -10,7 +10,7 @@ class Pay_Controller_Admin extends Controller {
     public function index() {
         $this->load->language('payment/' . $this->_paymentMethodName); // . $payment);
         $this->load->model('setting/setting');
-        $this->document->setTitle('Pay.nl - ' . $this->_defaultLabel);
+        $this->document->setTitle('PAY. - ' . $this->_defaultLabel);
 
         $this->data['error_warning'] = '';
         $this->data['error_apitoken'] = '';
@@ -253,7 +253,7 @@ class Pay_Controller_Admin extends Controller {
                     $this->error['apitoken'] = "Deze betaalmethode is niet geactiveerd voor deze dienst. Ga naar  <a target='paynl' href='https://admin.pay.nl/programs/programs'>https://admin.pay.nl/programs/programs</a> om dit aan te passen.";
                 }
             } catch (Pay_Api_Exception $e) {
-                $this->error['apitoken'] = 'De Pay.nl Api gaf de volgende fout: ' . $e->getMessage();
+                $this->error['apitoken'] = 'De PAY. Api gaf de volgende fout: ' . $e->getMessage();
             } catch (Pay_Exception $e) {
                 $this->error['apitoken'] = 'Er is een fout opgetreden: ' . $e->getMessage();
             } catch (Exception $e) {

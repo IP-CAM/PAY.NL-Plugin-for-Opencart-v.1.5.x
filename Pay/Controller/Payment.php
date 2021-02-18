@@ -59,12 +59,9 @@ class Pay_Controller_Payment extends Controller {
 
             $apiStart->setFinishUrl($returnUrl);
             $apiStart->setExchangeUrl($exchangeUrl);
-
-
             $apiStart->setPaymentOptionId($this->_paymentOptionId);
             
-			$currency_amount = $this->currency->format($order_info['total'], $order_info['currency_code'], '', false);
-
+		        $currency_amount = $this->currency->format($order_info['total'], $order_info['currency_code'], '', false);
             $amount = round($currency_amount * 100);
             $apiStart->setAmount($amount);
 
@@ -75,10 +72,12 @@ class Pay_Controller_Payment extends Controller {
                 $optionSub = $_POST['optionSubId'];
                 $apiStart->setPaymentOptionSubId($optionSub);
             }
+
+            $apiStart->orderNumber($order_info['order_id']);
             $apiStart->setDescription($order_info['order_id']);
             $apiStart->setExtra1($order_info['order_id']);
-            $apiStart->setObject('opencart1 3.4.7');
-
+            $phpVersion = substr(phpversion(), 0, 3);
+            $apiStart->setObject(substr('opencart1 3.4.7 | ' . VERSION . ' | ' . $phpVersion, 0, 64));
 
             // Klantdata verzamelen en meesturen
             $strAddress = $order_info['shipping_address_1'] . ' ' . $order_info['shipping_address_2'];

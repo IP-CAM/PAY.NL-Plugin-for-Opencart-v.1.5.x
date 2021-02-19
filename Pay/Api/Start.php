@@ -7,6 +7,7 @@ class Pay_Api_Start extends Pay_Api {
     protected $_action = 'start';
     private $_amount;
     private $_currency;
+    private $_orderNumber;
     private $_paymentOptionId;
     private $_paymentOptionSubId;
     private $_finishUrl;
@@ -29,6 +30,9 @@ class Pay_Api_Start extends Pay_Api {
 
     public function setCurrency($currency){
         $this->_currency = $currency;
+    }
+    public function orderNumber($orderNumber){
+        $this->_orderNumber = $orderNumber;
     }
     public function setPromotorId($promotorId){
         $this->_promotorId = $promotorId;
@@ -233,6 +237,11 @@ class Pay_Api_Start extends Pay_Api {
         if (!empty($this->_currency)) {
             $data['transaction']['currency'] = $this->_currency;
         }
+        if (!empty($this->_orderNumber)) {
+            $data['transaction']['orderNumber'] = $this->_orderNumber;
+        }
+
+
 
        
 

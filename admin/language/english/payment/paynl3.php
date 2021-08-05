@@ -47,6 +47,7 @@ $_['text_paynl_podiumkadokaart'] = $url;
 $_['text_paynl_postepay'] = $url;
 $_['text_paynl_przelewy24'] = $url;
 $_['text_paynl_sofortbanking'] = $url;
+$_['text_paynl_sofortbankingdigitalservices'] = $url;
 $_['text_paynl_spraypay'] = $url;
 $_['text_paynl_tikkie'] = $url;
 $_['text_paynl_trustly'] = $url;

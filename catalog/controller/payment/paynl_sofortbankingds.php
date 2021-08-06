@@ -3,9 +3,9 @@ $dir = dirname(dirname(dirname(dirname(__FILE__))));
 $autoload = $dir.'/Pay/Autoload.php';
 
 require_once $autoload;
-class ControllerPaymentPaynlsofortbankingdigitalservices extends Pay_Controller_Payment {
+class ControllerPaymentPaynlSofortbankingds extends Pay_Controller_Payment {
     protected $_paymentOptionId = 577;
-    protected $_paymentMethodName = 'paynl_sofortbankingdigitalservices';
+    protected $_paymentMethodName = 'paynl_sofortbankingds';
     
     
 }

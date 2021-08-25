@@ -4,7 +4,7 @@ $_['text_payment'] = 'Payment';
 $_['button_save'] = 'Save';
 $_['button_cancel'] = 'Cancel';
 
-$version = '3.4.7';
+$version = '3.4.8';
 $css = 'position: relative;top: -19px;display: inline;left: 10px;';
 $url = '<a href="https://www.pay.nl" target="_blank"><img src="https://static.pay.nl/generic/images/50x50/logo.png" alt="PAY." title="PAY."/></a>' .
     '<div style="' . $css . '">Version: ' . $version . '</div>';

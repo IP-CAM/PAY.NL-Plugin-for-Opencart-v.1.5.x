@@ -5,8 +5,8 @@ $_['button_save'] = 'Opslaan';
 $_['button_cancel'] = 'Annuleren';
 
 $version = '3.4.8';
-$css = 'position: relative;top: -19px;display: inline;left: 10px;';
-$url = '<a href="https://www.pay.nl" target="_blank"><img src="https://static.pay.nl/generic/images/50x50/logo.png" alt="PAY." title="PAY."/></a>' .
+$css = 'position: relative;top: -7px;display: inline;left: 10px;';
+$url = '<a href="https://www.pay.nl" target="_blank"><img style="width: 25px;" src="view/image/payment/main_pay_logo.png" alt="PAY." title="PAY."/></a>' .
     '<div style="' . $css . '">Version: ' . $version . '</div>';
 
 

@@ -77,7 +77,7 @@ class Pay_Controller_Payment extends Controller {
             $apiStart->setDescription($order_info['order_id']);
             $apiStart->setExtra1($order_info['order_id']);
             $phpVersion = substr(phpversion(), 0, 3);
-            $apiStart->setObject(substr('opencart1 3.4.8 | ' . VERSION . ' | ' . $phpVersion, 0, 64));
+            $apiStart->setObject(substr('opencart1 3.5.0 | ' . VERSION . ' | ' . $phpVersion, 0, 64));
 
             // Klantdata verzamelen en meesturen
             $strAddress = $order_info['shipping_address_1'] . ' ' . $order_info['shipping_address_2'];

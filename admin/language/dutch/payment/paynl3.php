@@ -4,16 +4,16 @@ $_['text_payment'] = 'Betaling';
 $_['button_save'] = 'Opslaan';
 $_['button_cancel'] = 'Annuleren';
 
-$version = '3.4.8';
+$version = '3.5.0';
 $css = 'position: relative;top: -7px;display: inline;left: 10px;';
 $url = '<a href="https://www.pay.nl" target="_blank"><img style="width: 25px;" src="view/image/payment/main_pay_logo.png" alt="PAY." title="PAY."/></a>' .
     '<div style="' . $css . '">Version: ' . $version . '</div>';
-
 
 $_['text_paynl_afterpay']  = $url;
 $_['text_paynl_afterpayem'] = $url;
 $_['text_paynl_amex']  = $url;
 $_['text_paynl_applepay']  = $url;
+$_['text_paynl_bataviacadeaukaart'] = $url;
 $_['text_paynl_bitcoin'] = $url;
 $_['text_paynl_billink'] = $url;
 $_['text_paynl_cartebleue'] = $url;

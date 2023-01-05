@@ -13,7 +13,6 @@ $_['text_paynl_afterpay']  = $url;
 $_['text_paynl_afterpayem'] = $url;
 $_['text_paynl_amex']  = $url;
 $_['text_paynl_applepay']  = $url;
-$_['text_paynl_bataviacadeaukaart'] = $url;
 $_['text_paynl_bitcoin'] = $url;
 $_['text_paynl_billink'] = $url;
 $_['text_paynl_cartebleue'] = $url;

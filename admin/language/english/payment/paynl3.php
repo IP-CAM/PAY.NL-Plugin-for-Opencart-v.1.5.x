@@ -26,7 +26,6 @@ $_['text_paynl_capayable'] = $url;
 $_['text_paynl_capayablegespreid'] = $url;
 $_['text_paynl_cashly'] = $url;
 $_['text_paynl_creditclick'] = $url;
-$_['text_paynl_clickandbuy'] = $url;
 $_['text_paynl_decadeaukaart'] = $url;
 $_['text_paynl_dinerbon'] = $url;
 $_['text_paynl_huisentuin'] = $url;

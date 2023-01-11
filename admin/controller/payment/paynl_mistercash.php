@@ -7,7 +7,7 @@ class ControllerPaymentPaynlMistercash extends Pay_Controller_Admin {
     protected $_paymentOptionId = 436;
     protected $_paymentMethodName = 'paynl_mistercash';
     
-    protected $_defaultLabel = 'Mistercash/Bancontact';
+    protected $_defaultLabel = 'Bancontact';
     
     
 }

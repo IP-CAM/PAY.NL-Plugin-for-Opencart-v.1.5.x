@@ -117,6 +117,11 @@ class Pay_Controller_Payment extends Controller {
                 'invoiceAddress' => $arrPaymentAddress,
                 'phoneNumber' => $order_info['telephone']
             );
+            
+            $paymentCompany = !empty($order_info['payment_company']) ? $order_info['payment_company'] : null;
+            if (!empty($paymentCompany)) {
+                $arrEnduser['company']['name'] = $paymentCompany;
+            }
 
             $apiStart->setEnduser($arrEnduser);
 

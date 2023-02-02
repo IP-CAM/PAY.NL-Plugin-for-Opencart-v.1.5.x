@@ -188,6 +188,9 @@ class Pay_Controller_Payment extends Controller {
             $response['success'] = $result['transaction']['paymentURL'];
         } catch (Pay_Api_Exception $e) {
             $response['error'] = "De PAY. api gaf de volgende fout: " . $e->getMessage();
+            if ($this->_paymentOptionId == 2931 && empty($paymentCompany)) {
+                $response['error'] = "Biller is een zakelijke betaalmethode en kan niet worden gebruikt zonder bedrijfsnaam, vul deze in en probeer opnieuw.";
+            }
         } catch (Pay_Exception $e) {
             $response['error'] = "Er is een fout opgetreden: " . $e->getMessage();
         } catch (Exception $e) {

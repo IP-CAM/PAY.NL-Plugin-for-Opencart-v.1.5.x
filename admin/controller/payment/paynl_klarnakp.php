@@ -7,6 +7,6 @@ class ControllerPaymentPaynlKlarnakp extends Pay_Controller_Admin {
   protected $_paymentOptionId = 1717;
   protected $_paymentMethodName = 'paynl_klarnakp';
 
-  protected $_defaultLabel = 'KlarnaKP';
+  protected $_defaultLabel = 'Klarna';
 
 }
